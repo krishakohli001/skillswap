@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SkillSwap</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#2c5ae6;--hi:#5282ff;--lo:#1b3cae;--ink:#f5f8ff;--soft:#c9d8ff;--pop:#ffd84d;--popink:#1c2a66;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#24489f;--hi:#3e66c9;--lo:#142a6b}}
+:root[data-theme="dark"]{--bg:#24489f;--hi:#3e66c9;--lo:#142a6b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Figtree,system-ui,sans-serif;min-height:100vh}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;mix-blend-mode:soft-light;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+h1,h2,h3,.logo{font-family:'Bricolage Grotesque',Figtree,sans-serif;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 20px 80px;position:relative;z-index:1}
+.raise{box-shadow:9px 9px 20px var(--lo),-9px -9px 20px var(--hi);background:var(--bg);border-radius:22px}
+.sink{box-shadow:inset 6px 6px 12px var(--lo),inset -6px -6px 12px var(--hi);background:var(--bg);border-radius:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:34px}
+.logo{font-size:26px;font-weight:800}
+.tray{display:flex;gap:6px;padding:6px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:var(--bg);transition:box-shadow .15s,transform .15s}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pop);outline-offset:3px}
+.tray button{padding:9px 20px;border-radius:14px;font-weight:600}
+.tray button.on{box-shadow:inset 4px 4px 8px var(--lo),inset -4px -4px 8px var(--hi);color:var(--pop)}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.04;font-weight:800;max-width:15ch;margin-bottom:14px}
+.lead{max-width:52ch;color:var(--soft);margin:0 0 30px}
+.machine{display:grid;grid-template-columns:1fr auto 1fr;gap:26px;align-items:center;padding:26px}
+.slot{padding:18px}
+.slot h2{font-size:18px;margin-bottom:12px}
+.keys{display:flex;flex-wrap:wrap;gap:10px}
+.key{padding:8px 15px;border-radius:13px;font-weight:600;font-size:14px;box-shadow:4px 4px 9px var(--lo),-4px -4px 9px var(--hi)}
+.key:hover{transform:translateY(-1px)}
+.key[aria-pressed=true]{box-shadow:inset 3px 3px 7px var(--lo),inset -3px -3px 7px var(--hi);color:var(--pop);transform:translateY(1px)}
+.knob{width:118px;height:118px;border-radius:50%;font:800 20px 'Bricolage Grotesque',sans-serif;color:var(--popink);
+background:radial-gradient(circle at 32% 28%,#ffe98f,var(--pop) 60%,#e8b800);box-shadow:10px 10px 22px var(--lo),-8px -8px 18px var(--hi),inset -4px -4px 8px #c99b00}
+.knob:active{transform:scale(.94);box-shadow:4px 4px 10px var(--lo),-4px -4px 10px var(--hi),inset 4px 4px 10px #c99b00}
+.add{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 34px;align-items:center}
+.add input,.add select,.search{font:inherit;color:var(--ink);border:0;padding:11px 16px;border-radius:14px;background:var(--bg);box-shadow:inset 4px 4px 8px var(--lo),inset -4px -4px 8px var(--hi)}
+.add select option{color:#111}
+.add input::placeholder,.search::placeholder{color:var(--soft)}
+.add button,.btn{padding:11px 20px;border-radius:14px;font-weight:600;box-shadow:5px 5px 11px var(--lo),-5px -5px 11px var(--hi)}
+.btn:active,.add button:active{box-shadow:inset 3px 3px 7px var(--lo),inset -3px -3px 7px var(--hi)}
+.btn.pop{background:var(--pop);color:var(--popink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
+.card{padding:20px;display:flex;flex-direction:column;gap:12px;animation:pop .45s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.96)}}
+.who{display:flex;gap:12px;align-items:center}
+.av{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:800 19px 'Bricolage Grotesque',sans-serif;box-shadow:inset 3px 3px 6px var(--lo),inset -3px -3px 6px var(--hi)}
+.who h3{font-size:19px}
+.rate{font-size:13px;color:var(--soft)}
+.badge{margin-left:auto;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--pop);color:var(--popink)}
+.row{font-size:14px;color:var(--soft)}
+.chip{display:inline-block;padding:2px 10px;margin:3px 4px 0 0;border-radius:99px;font-size:13px;box-shadow:inset 2px 2px 4px var(--lo),inset -2px -2px 4px var(--hi);color:var(--ink)}
+.chip.hit{background:var(--pop);color:var(--popink);box-shadow:none}
+.empty{padding:34px;text-align:center;color:var(--soft)}
+dialog{border:0;padding:0;background:transparent;color:var(--ink);width:min(440px,94vw);max-height:90vh}
+dialog::backdrop{background:rgba(10,25,90,.6)}
+.chat{padding:20px;display:flex;flex-direction:column;gap:12px}
+.chat header{display:flex;justify-content:space-between;align-items:center}
+.msgs{height:230px;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:80%;padding:8px 13px;border-radius:14px;font-size:14px;box-shadow:3px 3px 6px var(--lo),-3px -3px 6px var(--hi)}
+.m.me{align-self:flex-end;background:var(--pop);color:var(--popink);box-shadow:3px 3px 6px var(--lo)}
+.m.sys{align-self:center;box-shadow:none;color:var(--soft);font-size:13px}
+.send{display:flex;gap:8px}.send input{flex:1;font:inherit;color:var(--ink);border:0;padding:10px 14px;border-radius:14px;background:var(--bg);box-shadow:inset 3px 3px 7px var(--lo),inset -3px -3px 7px var(--hi)}
+.stars button{font-size:26px;padding:2px 6px;background:none;color:var(--soft)}
+.stars button:hover,.stars button.on{color:var(--pop);transform:scale(1.2)}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);padding:12px 22px;z-index:9;transition:transform .35s cubic-bezier(.2,1.3,.4,1)}
+#toast.show{transform:translate(-50%,0)}
+.hint{color:var(--soft);font-size:14px;margin:0 0 20px}
+@media(max-width:760px){.machine{grid-template-columns:1fr;justify-items:center}.slot{width:100%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="logo">⇄ SkillSwap</div>
+ <nav class="tray sink" aria-label="Sections"><button class="on" data-tab="swap">Swap</button><button data-tab="browse">Browse</button></nav>
+</header>
+
+<section id="swap">
+ <h1>Trade what you know for what you want to learn.</h1>
+ <p class="lead">Press the skills you can teach and the ones you want to learn, then hit Swap. We’ll show people who fit both sides.</p>
+ <div class="machine raise">
+  <div class="slot sink"><h2>I can teach</h2><div class="keys" id="tk"></div></div>
+  <button class="knob" id="go" aria-label="Find swaps">Swap</button>
+  <div class="slot sink"><h2>I want to learn</h2><div class="keys" id="lk"></div></div>
+ </div>
+ <form class="add" id="addf">
+  <input id="nsk" placeholder="Add a skill, e.g. Piano" aria-label="New skill" maxlength="24">
+  <select id="nside" aria-label="Add to"><option value="t">I can teach</option><option value="l">I want to learn</option></select>
+  <button type="submit">Add skill</button>
+ </form>
+ <div class="grid" id="res"></div>
+</section>
+
+<section id="browse" hidden>
+ <h1>Browse the community.</h1>
+ <p class="lead">Search by name or skill. Matching skills light up yellow when they fit your picks.</p>
+ <div class="add"><input class="search" id="q" placeholder="Search people or skills" aria-label="Search"></div>
+ <div class="grid" id="all"></div>
+</section>
+</div>
+
+<dialog id="chat"><div class="chat raise">
+ <header><h3 id="ct">Chat</h3><button class="btn" id="cx" aria-label="Close chat">Close</button></header>
+ <div class="msgs sink" id="msgs" aria-live="polite"></div>
+ <form class="send" id="sf"><input id="si" placeholder="Write a message" aria-label="Message"><button class="btn pop" type="submit">Send</button></form>
+ <div id="act"></div>
+</div></dialog>
+<div id="toast" class="raise" role="status"></div>
+
+<script>
+var skills=['Python','Guitar','Photography','Public speaking','Spanish','UI design','Excel','Chess','Cooking','Video editing','Calculus','Yoga'];
+var U=[
+{n:'Aarav',t:['Python','Chess'],w:['Photography','Guitar'],r:4.8,c:12},
+{n:'Meera',t:['Photography','Video editing'],w:['Python','Excel'],r:4.9,c:20},
+{n:'Diego',t:['Spanish','Cooking'],w:['Chess','UI design'],r:4.6,c:8},
+{n:'Isha',t:['UI design','Excel'],w:['Spanish','Public speaking'],r:4.7,c:15},
+{n:'Kabir',t:['Guitar','Public speaking'],w:['Calculus','Yoga'],r:4.5,c:6},
+{n:'Sana',t:['Yoga','Calculus'],w:['Video editing','Cooking'],r:5.0,c:4},
+{n:'Noah',t:['Chess','Excel'],w:['Spanish','Photography'],r:4.4,c:9},
+{n:'Tara',t:['Spanish','Python'],w:['Photography','Chess'],r:4.9,c:17}
+];
+var teach=new Set(['Photography','Chess']),learn=new Set(['Python','Spanish']),cur=null,booked=false;
+var $=function(i){return document.getElementById(i)};
+var hues=['#ffd84d','#9fe3c1','#ffb3c7','#c3b5ff','#ffc58a'];
+
+function toast(t){var e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.x);toast.x=setTimeout(function(){e.classList.remove('show')},2200)}
+function keys(el,set){el.innerHTML='';skills.forEach(function(s){var b=document.createElement('button');b.type='button';b.className='key';b.textContent=s;b.setAttribute('aria-pressed',set.has(s));b.onclick=function(){set.has(s)?set.delete(s):set.add(s);b.setAttribute('aria-pressed',set.has(s))};el.appendChild(b)})}
+function draw(){keys($('tk'),teach);keys($('lk'),learn)}
+function sc(u){var a=u.t.filter(function(s){return learn.has(s)}).length,b=u.w.filter(function(s){return teach.has(s)}).length;return{a:a,b:b,s:a*2+b*2+(a&&b?3:0)}}
+function chips(list,mine){return list.map(function(s){return '<span class="chip'+(mine.has(s)?' hit':'')+'">'+s+'</span>'}).join('')}
+function card(u,i,d){var m=sc(u),h=U.indexOf(u);
+ return '<article class="card raise" style="animation-delay:'+(d?i*70:0)+'ms"><div class="who"><div class="av" style="background:'+hues[h%5]+';color:#1c2a66">'+u.n[0]+'</div><div><h3>'+u.n+'</h3><div class="rate">★ '+u.r.toFixed(1)+' ('+u.c+' swaps)</div></div>'+(m.a&&m.b?'<span class="badge">Mutual swap</span>':'')+'</div>'+
+ '<div class="row">Can teach<br>'+chips(u.t,learn)+'</div><div class="row">Wants to learn<br>'+chips(u.w,teach)+'</div><button class="btn pop" data-i="'+h+'">Connect with '+u.n+'</button></article>'}
+function bind(el){el.querySelectorAll('button[data-i]').forEach(function(b){b.onclick=function(){openChat(+b.dataset.i)}})}
+function find(){var r=U.map(function(u){return{u:u,m:sc(u)}}).filter(function(x){return x.m.s>0}).sort(function(a,b){return b.m.s-a.m.s});
+ var el=$('res');
+ if(!r.length){el.innerHTML='<div class="empty sink">No matches yet. Press at least one skill on each side, then Swap again.</div>';return}
+ el.innerHTML=r.map(function(x,i){return card(x.u,i,1)}).join('');bind(el);toast(r.length+' people match your picks')}
+function browse(){var q=$('q').value.toLowerCase(),l=U.filter(function(u){return !q||(u.n+' '+u.t.join(' ')+' '+u.w.join(' ')).toLowerCase().indexOf(q)>-1});
+ $('all').innerHTML=l.length?l.map(function(u,i){return card(u,i,0)}).join(''):'<div class="empty sink">Nobody matches “'+q.replace(/</g,'')+'”. Try a skill name like Python.</div>';bind($('all'))}
+
+function msg(t,c){var d=document.createElement('div');d.className='m '+c;d.textContent=t;$('msgs').appendChild(d);$('msgs').scrollTop=1e5}
+function openChat(i){cur=U[i];booked=false;$('ct').textContent='Chat with '+cur.n;$('msgs').innerHTML='';$('act').innerHTML='';
+ var m=sc(cur),t=cur.t.filter(function(s){return learn.has(s)})[0]||cur.t[0];
+ msg('Request sent. Say hi to '+cur.n+'.','sys');setTimeout(function(){msg('Hi! I’d love to swap. I can help with '+t+'. When are you free?','')},600);
+ times();if(!$('chat').open)$('chat').showModal()}
+function times(){$('act').innerHTML='<div class="row">Book a session</div>'+['Sat 10am','Sun 4pm','Tue 7pm'].map(function(t){return '<button class="btn" data-t="'+t+'" style="margin:6px 8px 0 0">'+t+'</button>'}).join('');
+ $('act').querySelectorAll('button').forEach(function(b){b.onclick=function(){booked=true;msg('Session booked: '+b.dataset.t,'sys');toast('Session booked for '+b.dataset.t);
+ $('act').innerHTML='<div class="row">Session done? Rate '+cur.n+'</div><div class="stars">'+[1,2,3,4,5].map(function(n){return '<button data-s="'+n+'" aria-label="'+n+' stars">★</button>'}).join('')+'</div>';
+ $('act').querySelectorAll('button').forEach(function(s){s.onclick=function(){var n=+s.dataset.s;cur.r=(cur.r*cur.c+n)/(cur.c+1);cur.c++;
+  $('act').querySelectorAll('button').forEach(function(x){x.classList.toggle('on',+x.dataset.s<=n)});toast('Thanks! '+cur.n+' now rated '+cur.r.toFixed(1));browse()}})}})}
+$('sf').onsubmit=function(e){e.preventDefault();var v=$('si').value.trim();if(!v)return;msg(v,'me');$('si').value='';
+ setTimeout(function(){msg(['Sounds good!','Great, pick a time below.','Happy to help with that.'][Math.floor(Math.random()*3)],'')},700)};
+$('cx').onclick=function(){$('chat').close()};
+$('addf').onsubmit=function(e){e.preventDefault();var v=$('nsk').value.trim();if(!v)return;
+ if(skills.indexOf(v)<0)skills.push(v);($('nside').value=='t'?teach:learn).add(v);$('nsk').value='';draw();toast(v+' added')};
+$('go').onclick=find;$('q').oninput=browse;
+document.querySelectorAll('[data-tab]').forEach(function(b){b.onclick=function(){
+ document.querySelectorAll('[data-tab]').forEach(function(x){x.classList.toggle('on',x===b)});
+ $('swap').hidden=b.dataset.tab!='swap';$('browse').hidden=b.dataset.tab!='browse';if(b.dataset.tab=='browse')browse()}});
+draw();find();
+</script>
+</body>
+</html>
